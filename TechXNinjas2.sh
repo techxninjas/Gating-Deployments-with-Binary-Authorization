@@ -42,12 +42,12 @@ KEYRING=binauthz-keys
 KEY_NAME=codelab-key
 KEY_VERSION=1
 
-CONTAINER_PATH=$REGION-docker.pkg.dev/${PROJECT_ID}/artifact-scanning-repo/sample-image
+CONTAINER_PATH=${REGION}-docker.pkg.dev/${PROJECT_ID}/artifact-scanning-repo/sample-image
 
 DIGEST=$(gcloud container images describe ${CONTAINER_PATH}:latest \
     --format='get(image_summary.digest)')
 
-COMPUTE_ZONE=$REGION
+COMPUTE_ZONE=${REGION}
 
 cat > binauth_policy.yaml << EOM
 defaultAdmissionRule:
@@ -66,7 +66,7 @@ EOM
 
 gcloud beta container binauthz policy import binauth_policy.yaml
 
-CONTAINER_PATH=$REGION-docker.pkg.dev/${PROJECT_ID}/artifact-scanning-repo/sample-image
+CONTAINER_PATH=${REGION}-docker.pkg.dev/${PROJECT_ID}/artifact-scanning-repo/sample-image
 
 DIGEST=$(gcloud container images describe ${CONTAINER_PATH}:good \
     --format='get(image_summary.digest)')
