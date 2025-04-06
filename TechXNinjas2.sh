@@ -66,9 +66,13 @@ EOM
 
 gcloud beta container binauthz policy import binauth_policy.yaml
 
-CONTAINER_PATH=${REGION}-docker.pkg.dev/${PROJECT_ID}/artifact-scanning-repo/sample-image
+docker build -t $REGION-docker.pkg.dev/${PROJECT_ID}/artifact-scanning-repo/sample-image:bad .
 
-DIGEST=$(gcloud container images describe ${CONTAINER_PATH}:good \
+docker push $REGION-docker.pkg.dev/${PROJECT_ID}/artifact-scanning-repo/sample-image:bad
+
+CONTAINER_PATH=$REGION-docker.pkg.dev/${PROJECT_ID}/artifact-scanning-repo/sample-image
+
+DIGEST=$(gcloud container images describe ${CONTAINER_PATH}:bad \
     --format='get(image_summary.digest)')
 
 cat > deploy.yaml << EOM
