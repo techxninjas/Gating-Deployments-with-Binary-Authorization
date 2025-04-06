@@ -42,6 +42,29 @@ KEYRING=binauthz-keys
 KEY_NAME=codelab-key
 KEY_VERSION=1
 
+cd vuln-scan
+
+cat > policy.yaml << EOM
+
+globalPolicyEvaluationMode: ENABLE
+defaultAdmissionRule:
+  evaluationMode: ALWAYS_ALLOW
+  enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
+name: projects/$PROJECT_ID/policy
+
+EOM
+
+gcloud container binauthz policy import policy.yaml
+
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT} 5th TASK (REMAINING HALF) COMPLETED SUCCESSFULLY   ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}      GO TO LAB TO CHECK THE PROGRESS      ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}    8th TASK STARTING FOR EXECUTION...    ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo
+
 CONTAINER_PATH=${REGION}-docker.pkg.dev/${PROJECT_ID}/artifact-scanning-repo/sample-image
 
 DIGEST=$(gcloud container images describe ${CONTAINER_PATH}:latest \
@@ -115,6 +138,12 @@ EOM
 
 kubectl apply -f deploy.yaml
 
-echo "${RED}${BOLD}Congratulations${RESET}" "${WHITE}${BOLD}for${RESET}" "${GREEN}${BOLD}Completing the Lab !!!${RESET}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}            STARTING THE EXECUTION...     ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo
+
+echo "${GREEN}${BOLD}Congratulations${RESET}" "${WHITE}${BOLD}for${RESET}" "${GREEN}${BOLD}Completing the Lab !!!${RESET}"
+echo "For more lab solutions, join WhatsApp Group of TechXNinjas"
 
 #-----------------------------------------------------end----------------------------------------------------------#
