@@ -20,7 +20,11 @@ BOLD=`tput bold`
 RESET=`tput sgr0`
 #----------------------------------------------------start--------------------------------------------------#
 
-echo "${YELLOW}${BOLD}Starting${RESET}" "${GREEN}${BOLD}Execution${RESET}"
+# Welcome message
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}            STARTING THE EXECUTION...     ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo
 
 export REGION="${ZONE%-*}"
 export PROJECT_ID=$(gcloud config get-value project)
@@ -36,6 +40,11 @@ gcloud services enable \
   containerscanning.googleapis.com \
   ondemandscanning.googleapis.com \
   binaryauthorization.googleapis.com 
+
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}           1st TASK IN UNDER EXECUTION...    ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo
 
 gcloud artifacts repositories create artifact-scanning-repo \
   --repository-format=docker \
@@ -78,6 +87,15 @@ if __name__ == "__main__":
 EOF
 
 gcloud builds submit . -t $REGION-docker.pkg.dev/${PROJECT_ID}/artifact-scanning-repo/sample-image
+
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}      1st TASK COMPLETED SUCCESSFULLY     ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}      GO TO LAB TO CHECK THE PROGRESS     ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}    2nd TASK STARTING FOR EXECUTION...    ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo
 
 cat > ./vulnz_note.json << EOM
 {
@@ -136,6 +154,15 @@ curl -X POST  \
     --data-binary @./iam_request.json \
     "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/${NOTE_ID}:setIamPolicy"
 
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}       2nd TASK COMPLETED SUCCESSFULLY     ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}       GO TO LAB TO CHECK THE PROGRESS      ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}       3rd TASK STARTING FOR EXECUTION...    ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo
+
 KEY_LOCATION=global
 KEYRING=binauthz-keys
 KEY_NAME=codelab-key
@@ -157,6 +184,15 @@ gcloud beta container binauthz attestors public-keys add  \
     --keyversion="${KEY_VERSION}"
 
 gcloud container binauthz attestors list
+
+
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}       4th TASK COMPLETED SUCCESSFULLY    ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}      5th TASK STARTING FOR EXECUTION...   ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo
 
 CONTAINER_PATH=$REGION-docker.pkg.dev/${PROJECT_ID}/artifact-scanning-repo/sample-image
 
@@ -210,18 +246,14 @@ gcloud container binauthz policy import policy.yaml
 
 kubectl run hello-server --image gcr.io/google-samples/hello-app:1.0 --port 8080
 
-cat > policy.yaml << EOM
-
-globalPolicyEvaluationMode: ENABLE
-defaultAdmissionRule:
-  evaluationMode: ALWAYS_ALLOW
-  enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
-name: projects/$PROJECT_ID/policy
-
-EOM
-
-gcloud container binauthz policy import policy.yaml
-
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}   5th (HALF TASK) COMPLETED SUCCESSFULLY  ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}       GO TO LAB TO CHECK THE PROGRESS      ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}     6th TASK STARTING FOR EXECUTION...     ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
   --member serviceAccount:${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com \
   --role roles/binaryauthorization.attestorsViewer
@@ -264,12 +296,10 @@ steps:
   name: 'gcr.io/cloud-builders/docker'
   args: ['tag',  '$REGION-docker.pkg.dev/${PROJECT_ID}/artifact-scanning-repo/sample-image', '$REGION-docker.pkg.dev/${PROJECT_ID}/artifact-scanning-repo/sample-image:good']
 
-
 #pushing to artifact registry
 - id: "push"
   name: 'gcr.io/cloud-builders/docker'
   args: ['push',  '$REGION-docker.pkg.dev/${PROJECT_ID}/artifact-scanning-repo/sample-image:good']
-
 
 #Sign the image only if the previous severity check passes
 - id: 'create-attestation'
@@ -282,14 +312,20 @@ steps:
     - '--keyversion'
     - 'projects/${PROJECT_ID}/locations/$KEY_LOCATION/keyRings/$KEYRING/cryptoKeys/$KEY_NAME/cryptoKeyVersions/$KEY_VERSION'
 
-
-
 images:
   - $REGION-docker.pkg.dev/${PROJECT_ID}/artifact-scanning-repo/sample-image:good
 EOF
 
 gcloud builds submit
 
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}      6th TASK COMPLETED SUCCESSFULLY      ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}      GO TO LAB TO CHECK THE PROGRESS      ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}      7th TASK STARTING FOR EXECUTION...   ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo
 COMPUTE_ZONE=$REGION
 
 cat > binauth_policy.yaml << EOM
@@ -353,6 +389,15 @@ spec:
 EOM
 
 kubectl apply -f deploy.yaml
+
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}      7th TASK COMPLETED SUCCESSFULLY       ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}       GO TO LAB TO CHECK THE PROGRESS      ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}   CHECK THE DOCUMENTATION FOR NEXT STEP... ${RESET_FORMAT}"
+echo "${BLUE_TEXT}${BOLD_TEXT}===============================================${RESET_FORMAT}"
+echo
 
 echo "${RED}${BOLD}Congratulations${RESET}" "${WHITE}${BOLD}for${RESET}" "${GREEN}${BOLD}Completing the Lab !!!${RESET}"
 
