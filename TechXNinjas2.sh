@@ -37,59 +37,15 @@ gcloud services enable \
   ondemandscanning.googleapis.com \
   binaryauthorization.googleapis.com 
 
-gcloud artifacts repositories create artifact-scanning-repo \
-  --repository-format=docker \
-  --location=$REGION \
-  --description="Docker repository"
-
-gcloud auth configure-docker $REGION-docker.pkg.dev
-
-ATTESTOR_ID=vulnz-attestor
-
-gcloud container binauthz attestors create $ATTESTOR_ID \
-    --attestation-authority-note=$NOTE_ID \
-    --attestation-authority-note-project=${PROJECT_ID}
-
-gcloud container binauthz attestors list
-
-PROJECT_NUMBER=$(gcloud projects describe "${PROJECT_ID}"  --format="value(projectNumber)")
-
 KEY_LOCATION=global
 KEYRING=binauthz-keys
 KEY_NAME=codelab-key
 KEY_VERSION=1
 
-gcloud kms keyrings create "${KEYRING}" --location="${KEY_LOCATION}"
-
-gcloud kms keys create "${KEY_NAME}" \
-    --keyring="${KEYRING}" --location="${KEY_LOCATION}" \
-    --purpose asymmetric-signing   \
-    --default-algorithm="ec-sign-p256-sha256"
-
-gcloud beta container binauthz attestors public-keys add  \
-    --attestor="${ATTESTOR_ID}"  \
-    --keyversion-project="${PROJECT_ID}"  \
-    --keyversion-location="${KEY_LOCATION}" \
-    --keyversion-keyring="${KEYRING}" \
-    --keyversion-key="${KEY_NAME}" \
-    --keyversion="${KEY_VERSION}"
-
-gcloud container binauthz attestors list
-
 CONTAINER_PATH=$REGION-docker.pkg.dev/${PROJECT_ID}/artifact-scanning-repo/sample-image
 
 DIGEST=$(gcloud container images describe ${CONTAINER_PATH}:latest \
     --format='get(image_summary.digest)')
-
-gcloud beta container binauthz attestations sign-and-create  \
-    --artifact-url="${CONTAINER_PATH}@${DIGEST}" \
-    --attestor="${ATTESTOR_ID}" \
-    --attestor-project="${PROJECT_ID}" \
-    --keyversion-project="${PROJECT_ID}" \
-    --keyversion-location="${KEY_LOCATION}" \
-    --keyversion-keyring="${KEYRING}" \
-    --keyversion-key="${KEY_NAME}" \
-    --keyversion="${KEY_VERSION}"
 
 COMPUTE_ZONE=$REGION
 
